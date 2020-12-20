@@ -356,7 +356,7 @@ function AS:GuildRosterManager()
 	GRM_JDToolScrollBorderFrameBottomRightCorner:Hide()
 	GRM_JDToolScrollBorderFrameBottomLeftCorner:Hide()
 
-	--------------------
+	------------------
 	-- Backup Frame
 	--------------------
 	AS:SkinFrame(GRM_UIOptionsFrame)
@@ -406,10 +406,10 @@ function AS:GuildRosterManager()
 	AdjustSliderThumbFrameLevel ( GRM_CoreAltScrollFrameSliderThumbTexture )
 	AS:SkinScrollBar(GRM_AltGroupingScrollFrameSlider)
 	AdjustSliderThumbFrameLevel ( GRM_AltGroupingScrollFrameSliderThumbTexture )
-	AS:SkinCheckBox(GRM_SafeFromRulesCheckButton)
 	AS:SkinCheckBox(GRM_CustomNoteSyncMetaCheckBox)
 	AS:SkinScrollBar(GRM_AddAltScrollFrameSlider)
 	AS:SkinCloseButton(GRM_AddAltEditBoxCloseButton)
+	AS:SkinButton(GRM_SafeFromRulesButton)
 
 	-- Alt Grouping Frame
 	AS:SkinFrame(GRM_AltGroupingScrollBorderFrame)
@@ -452,6 +452,8 @@ function AS:GuildRosterManager()
 	AS:SkinEditBox(GRM_CustomRuleLevelStartEditBox)
 	AS:SkinEditBox(GRM_CustomRuleLevelStopEditBox)
 	AS:SkinEditBox(GRM_NoteSearchEditBox)
+	AS:SkinCheckBox(GRM_ToolCoreIgnoreCheckButton)
+	AS:SkinCheckBox(GRM_MacroToolDisableLogSpamCheckbutton)
 
 	AS:SkinScrollBar(GRM_ToolMacrodScrollFrameSilder)
 	AdjustSliderThumbFrameLevel ( GRM_ToolMacrodScrollFrameSilderThumbTexture )
@@ -472,6 +474,7 @@ function AS:GuildRosterManager()
 	AS:SkinButton(GRM_ExportNextRangeButton)
 	AS:SkinButton(GRM_ExportPreviousRangeButton)
 	AS:SkinButton(GRM_ExportMemberDetailsHeadersButton)
+	AS:SkinButton(GRM_ExportResetOptionsButton)
 	AS:SkinFrame(GRM_ExportLogScrollBorderFrame)
 	AS:SkinEditBox(GRM_ExportRangeEditBox1)
 	AS:SkinEditBox(GRM_ExportRangeEditBox2)
@@ -504,10 +507,9 @@ function AS:GuildRosterManager()
 		end
 	end)
 
-	local isLoaded = false
-	local isLoaded2 = false
-	local isLoaded3 = false
-	local isLoaded4 = false
+	-- Since much of the addon only loads on demand, this AddOnSkins file needs to wait til certain things have been configured first...
+	local isLoaded , isLoaded2 , isLoaded3 , isLoaded4 , isLoaded5 , isLoaded6 = false , false , false , false , false , false
+
 
 	GRM_MemberDetailMetaData:HookScript("OnShow" , function( self )
 		if not isLoaded then
@@ -518,23 +520,71 @@ function AS:GuildRosterManager()
 			-- AS:SkinEditBox(GRM_CustomNoteEditBox)			-- Not skinning for now - seems odd looking
 
 			if buildVersion < 80000 then
-				self:SetPoint ( "TOPLEFT" , GuildFrame , "TOPRIGHT" , -2 , 5 )
+				if GRM_UI.GuildRosterFrame:IsVisible() then
+					self:ClearAllPoints()
+					self:SetPoint ( "TOPLEFT" , GRM_UI.GuildRosterFrame , "TOPRIGHT" , 0 , 5 )
+				end
+
+				if GuildMemberDetailFrame:IsVisible() then
+					self:ClearAllPoints()
+					self:SetPoint ( "TOPLEFT" , GuildMemberDetailFrame , "TOPRIGHT" , 2 , 0.5 )
+				end
+
+				GuildMemberDetailFrame:HookScript ( "OnShow" , function( self )
+					GuildMemberDetailFrame:ClearAllPoints()
+					GuildMemberDetailFrame:SetPoint ( "TOPLEFT" , GuildFrame , "TOPRIGHT" , 1 , -1 )
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , self , "TOPRIGHT" , 2 , 0.5 )
+				end)
+
+				GuildMemberDetailFrame:HookScript ( "OnHide" , function()
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , GuildFrame , "TOPRIGHT" , 0 , 5 )
+				end)
 
 			else
 				if CommunitiesFrame:IsVisible() then
+					self:ClearAllPoints();
 					self:SetPoint ( "TOPLEFT" , CommunitiesFrame , "TOPRIGHT" , 25 , 5 )
 				elseif GRM_UI.GuildRosterFrame:IsVisible() then
+					self:ClearAllPoints();
 					self:SetPoint ( "TOPLEFT" , GRM_UI.GuildRosterFrame , "TOPRIGHT" , 25 , 5 )
 				end
 
+				if GuildFrame:IsVisible() and not GRM_G.CurrentPinCommunity then
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , GRM_UI.GuildRosterFrame , "TOPRIGHT" , 1 , 5 );
+				end
+
+				if GuildMemberDetailFrame:IsVisible() and not GRM_G.CurrentPinCommunity then
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , GuildMemberDetailFrame , "TOPRIGHT" , 2 , 0.5 );
+				end
+
 				CommunitiesFrame.GuildMemberDetailFrame:HookScript ( "OnShow" , function( self )
+					self:ClearAllPoints();
 					self:SetPoint ( "TOPLEFT" , CommunitiesFrame , "TOPRIGHT" , 34 , 0 )
+					GRM_MemberDetailMetaData:ClearAllPoints()
 					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , self , "TOPRIGHT" , 2 , 0.5 )
 				end)
 
 				CommunitiesFrame.GuildMemberDetailFrame:HookScript ( "OnHide" , function( self )
+					GRM_MemberDetailMetaData:ClearAllPoints()
 					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , CommunitiesFrame , "TOPRIGHT" , 25 , 5 )
 				end)
+
+				GRM_UI.MemberDetailFrameClassic:SetScript ( "OnShow" , function( self )
+					GRM_UI.MemberDetailFrameClassic:ClearAllPoints()
+					GRM_UI.MemberDetailFrameClassic:SetPoint ( "TOPLEFT" , GRM_UI.GuildRosterFrame , "TOPRIGHT" , 2 , -1 );
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , self , "TOPRIGHT" , 2 , 0.5 );
+				end);
+			
+				GRM_UI.MemberDetailFrameClassic:SetScript ( "OnHide" , function()
+					GRM_MemberDetailMetaData:ClearAllPoints()
+					GRM_MemberDetailMetaData:SetPoint ( "TOPLEFT" , GuildFrame , "TOPRIGHT" , 1 , 5 );
+				end);
+
 			end
 
 			AS:SkinFrame(GRM_PlayerNoteWindow)
@@ -581,12 +631,21 @@ function AS:GuildRosterManager()
 
 			GRM_CoreAltScrollFrameSlider:SetPoint( "TOPLEFT" , GRM_CoreAltScrollFrame , "TOPRIGHT" , -2 , -10 )
 
+			-- FONT ISSUES
+			GRM_MemberDetailLastOnlineTitleTxt:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
+			GRM_MemberDetailMetaZoneInfoText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
+			GRM_MemberDetailDateJoinedTitleTxt:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
+			GRM_MemberDetailBirthdayTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
+			GRM_altFrameTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 8 , "NONE" );
+			GRM_AddAltTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 11 , "NONE" );
+
 			-- Tooltip Scaling should be a bit bigger
 			GRM_MemberDetailNJDSyncTooltip:SetScale ( 0.85 )
 			GRM_MemberDetailNotifyStatusChangeTooltip:SetScale ( 0.85 )
 			isLoaded = true
 		end
 	end)
+	
 
 	GRM_RosterCheckBoxSideFrame:HookScript("OnShow" , function()
 		if not isLoaded2 then
@@ -623,7 +682,8 @@ function AS:GuildRosterManager()
 			-- Log Frame
 			GRM_LogExtraOptionsFrame:SetPoint ( "TOPLEFT" , GRM_LogFrame , "BOTTOMLEFT" , 0 , -1 )
 			GRM_LogExtraOptionsFrame:SetSize ( 600 , 155 )
-			GRM_LogExtraOptionsButton:SetPoint ( "BOTTOMRIGHT" , GRM_RosterChangeLogFrame.GRM_LogFrame , "BOTTOMLEFT" , -1 , 0 )
+			GRM_LogExtraOptionsButton:SetPoint ( "TOP" , GRM_RosterCheckBoxSideFrame , "BOTTOM" , 0 , -1 );
+			GRM_EventsFrameStatusMessageText2:SetPoint ( "TOP" , GRM_EventsFrame , 0 , 55 );
 
 			if not isLoaded then
 				sideGroupingLogic()
@@ -650,6 +710,32 @@ function AS:GuildRosterManager()
 
 			GRM_LogEditBox:SetBackdrop ( nil )
 			AS:SkinEditBox(GRM_LogEditBox)
+
+			GRM_LogExtraOptionsFrame:HookScript ( "OnShow" , function()
+				if not isLoaded5 then
+					isLoaded5 = true;
+					for i = 1 , 14 do
+						-- no need to skin here, just remove edge...
+						GRM_LogExtraOptionsFrame["colorBoxFrame" .. i]:SetBackdrop ( {
+							bgFile = nil,
+							edgeFile = nil,
+							tile = true,
+							tileSize = 32,
+							edgeSize = 9,
+							insets = { left = -2 , right = -2 , top = -3 , bottom = -2 }
+						} );				
+					end
+				end
+			end);
+
+			-- Skinning the EditBoxes in options now the overlay
+			AS:SkinFrame(GRM_RosterTimeIntervalOverlayNote)
+			AS:SkinFrame(GRM_ReportInactiveReturnOverlayNote)
+			AS:SkinFrame(GRM_RosterReportUpcomingEventsOverlayNote)
+			AS:SkinFrame(GRM_RosterMinLvlOverlayNote)
+			AS:SkinFrame(GRM_AutoTriggerTimeOverlayNote)
+			AS:SkinFrame(GRM_AutoBackupTimeOverlayNote)
+
 			isLoaded2 = true
 		end
 	end)
@@ -663,37 +749,28 @@ function AS:GuildRosterManager()
 
 	-- Guild Recruitment Frames
 
-	if buildVersion >= 80000 then
-		GRM.WaitForLoad = function()
-			if not CommunitiesGuildRecruitmentFrame then
-				C_Timer.After ( 3 , function()
-					GRM.WaitForLoad()
-				end)
-			else
-				CommunitiesGuildRecruitmentFrame:HookScript ( "OnShow" , function()
-					if not isLoaded3 then
-						C_Timer.After( 0.25 , function()
-							AS:SkinButton(CommunitiesGuildRecruitmentFrame.GRM_MoveBackwardButton)
-							AS:SkinButton(CommunitiesGuildRecruitmentFrame.GRM_MoveForwardButton)
-							AS:SkinButton(GRM_ClearAllRecruitsButton)
-							AS:SkinButton(GRM_InviteAllRecruitsButton)
-							GRM_InviteMessageFrameBottomBorder:Hide()
-							GRM_InviteMessageFrameTopBorder:Hide()
-							GRM_InviteMessageFrameLeftBorder:Hide()
-							GRM_InviteMessageFrameRightBorder:Hide()
-							GRM_InviteMessageFrameTopLeftCorner:Hide()
-							GRM_InviteMessageFrameTopRightCorner:Hide()
-							GRM_InviteMessageFrameBottomRightCorner:Hide()
-							GRM_InviteMessageFrameBottomLeftCorner:Hide()
-							isLoaded3 = true
-						end)
-					end
-				end)
-			end
+	GRM.WaitForLoad = function( load1 , load2 )
+		local a = load1 or true;
+		local b = load2 or true;
+
+		if a and GRM_EnableMouseOver then
+			a = false
+			AS:SkinCheckBox(GRM_EnableMouseOver)
 		end
 
-		GRM.WaitForLoad()
+		if b and GRM_EnableMouseOverOldRoster then
+			b = false
+			AS:SkinCheckBox(GRM_EnableMouseOverOldRoster)
+		end
+
+		if a or b then
+			C_Timer.After ( 3 , function()
+				GRM.WaitForLoad( a , b )
+			end)
+		end
 	end
+
+	GRM.WaitForLoad()
 
 end
 
