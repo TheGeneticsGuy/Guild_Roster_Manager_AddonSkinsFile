@@ -502,6 +502,10 @@ function AS:GuildRosterManager()
 	AS:SkinScrollBar(GRM_ExportLogScrollFrameSlider)
 	AdjustSliderThumbFrameLevel ( GRM_ExportLogScrollFrameSliderThumbTexture )
 
+	------------------------
+	-- GRM_DisableGroupInfoTooltipCheckButton --
+	------------------------
+
 	for i = 1 , 21 do
 		if i ~= 19 then
 			AS:SkinCheckBox(_G["GRM_ExportFilter"..i])
@@ -520,6 +524,17 @@ function AS:GuildRosterManager()
 				GRM_MemberDetailMetaData:Hide()
 			end
 		end)
+	end
+
+	local ModulesOptions = function()
+
+		--Group Info Module
+		if GRM_G.Module.GroupInfo ~= nil then
+			AS:SkinCheckBox (GRM_EnableGIModuleCheckButton);
+			AS:SkinCheckBox (GRM_ProximityCheckButton);
+			AS:SkinCheckBox (GRM_DisableGroupInfoTooltipCheckButton);
+		end
+		
 	end
 
 	GRM_NoteBordersButton:HookScript ( "OnClick" , function ( self , button )
@@ -750,6 +765,9 @@ function AS:GuildRosterManager()
 					end
 				end
 			end);
+
+			-- Load the modules
+			ModulesOptions();
 
 			-- Skinning the EditBoxes in options now the overlay
 			AS:SkinFrame(GRM_RosterTimeIntervalOverlayNote)
