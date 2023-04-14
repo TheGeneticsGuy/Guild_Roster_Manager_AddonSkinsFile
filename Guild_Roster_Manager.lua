@@ -1,4 +1,4 @@
- 	-- Updated for 10.0.2 November 15th, 2022 GRM ver 1.948 (Classic/Wrath/Live Retail Compatible)
+ 	-- Updated April 14th, 2023 GRM ver 1.97 (Classic/Wrath/Live Retail Compatible)
 
 local AS = unpack(AddOnSkins)
 local GRM = {}
@@ -174,8 +174,6 @@ function AS:GuildRosterManager()
 	AS:SkinCheckBox(GRM_LevelFilter4Button)
 	AS:SkinCheckBox(GRM_LevelFilter5Button)
 	AS:SkinCheckBox(GRM_LevelFilter6Button)
-	AS:SkinCheckBox(GRM_AnnounceBdaysOnLoginButton)
-
 	if GRM_LevelFilter7Button then
 		AS:SkinCheckBox(GRM_LevelFilter7Button)	-- 10.0 with level 70 introduced need for
 	end
@@ -197,6 +195,7 @@ function AS:GuildRosterManager()
 	AS:SkinCheckBox(GRM_BDaySyncCheckBox)
 	AS:SkinCheckBox(GRM_RosterNotifyOnChangesCheckButton)
 	AS:SkinEditBox(GRM_AutoTriggerTimeEditBox)
+	AS:SkinButton(GRM_SyncProgressButton)
 
 	-- Officer Tab
 	AS:SkinCheckBox(GRM_RosterAddTimestampCheckButton)
@@ -210,10 +209,7 @@ function AS:GuildRosterManager()
 	AS:SkinEditBox(GRM_CustomTagREJoinEditBox)
 
 	-- Backup Tab
-	AS:SkinCheckBox(GRM_AutoBackupCheckBox)
-	AS:SkinEditBox(GRM_AutoBackupTimeEditBox)
-	AS:SkinButton(GRM_HordeTab)
-	AS:SkinButton(GRM_AllianceTab)
+	AS:SkinButton(GRM_TransferGuideButton)
 
 	-- UX (UI) Tab
 	AS:SkinCheckBox(GRM_FadeCheckButton)
@@ -227,7 +223,7 @@ function AS:GuildRosterManager()
 	AS:SkinSlideBar(GRM_ExportToolScaleSlider)
 	AS:SkinSlideBar(GRM_AdvancedAuditToolScaleSlider)
 
-	------------------------------
+	----------------------------
 	-- Add Event to Calendar Frame
 	------------------------------
 	GRM_AddEventScrollBorderFrameBottomBorder:Hide()
@@ -246,7 +242,7 @@ function AS:GuildRosterManager()
 	AS:SkinButton(GRM_EventsFrameIgnoreAllButton)
 
 	--------------------
-	--Ban List
+	-- Ban List
 	--------------------
 	GRM_CoreBanListScrollBorderFrameBottomBorder:Hide()
 	GRM_CoreBanListScrollBorderFrameTopBorder:Hide()
@@ -502,10 +498,6 @@ function AS:GuildRosterManager()
 	AS:SkinScrollBar(GRM_ExportLogScrollFrameSlider)
 	AdjustSliderThumbFrameLevel ( GRM_ExportLogScrollFrameSliderThumbTexture )
 
-	------------------------
-	-- GRM_DisableGroupInfoTooltipCheckButton --
-	------------------------
-
 	for i = 1 , 21 do
 		if i ~= 19 then
 			AS:SkinCheckBox(_G["GRM_ExportFilter"..i])
@@ -524,17 +516,6 @@ function AS:GuildRosterManager()
 				GRM_MemberDetailMetaData:Hide()
 			end
 		end)
-	end
-
-	local ModulesOptions = function()
-
-		--Group Info Module
-		if GRM_G.Module.GroupInfo ~= nil then
-			AS:SkinCheckBox (GRM_EnableGIModuleCheckButton);
-			AS:SkinCheckBox (GRM_ProximityCheckButton);
-			AS:SkinCheckBox (GRM_DisableGroupInfoTooltipCheckButton);
-		end
-		
 	end
 
 	GRM_NoteBordersButton:HookScript ( "OnClick" , function ( self , button )
@@ -765,9 +746,6 @@ function AS:GuildRosterManager()
 					end
 				end
 			end);
-
-			-- Load the modules
-			ModulesOptions();
 
 			-- Skinning the EditBoxes in options now the overlay
 			AS:SkinFrame(GRM_RosterTimeIntervalOverlayNote)
