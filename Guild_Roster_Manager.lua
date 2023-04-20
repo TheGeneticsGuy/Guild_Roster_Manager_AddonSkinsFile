@@ -1,4 +1,4 @@
- 	-- Updated April 14th, 2023 GRM ver 1.97 (Classic/Wrath/Live Retail Compatible)
+ 	-- Updated April 20th 2023 GRM ver 1.972 (Classic/Wrath/Live Retail Compatible)
 
 local AS = unpack(AddOnSkins)
 local GRM = {}
@@ -126,10 +126,6 @@ function AS:GuildRosterManager()
 	AS:SkinButton(GRM_CustomRankResetButton)
 	AS:SkinButton(GRM_HardResetButton)
 	AS:SkinButton(GRM_ExportGlobalControlButton)
-	AS:SkinButton(GRM_OpenMacroToolButton)
-	AS:SkinButton(GRM_OpenMouseoverButton)
-	AS:SkinButton(GRM_OpenExportToolButton)
-	AS:SkinButton(GRM_OpenAuditJoinDateToolButton)
 	AS:SkinButton(GRM_RosterResetOptionsButton)
 	AS:SkinFrame(GRM_DefaultTabSelected)
 	AS:SkinFrame(GRM_DefaultTabMenu	)
@@ -217,11 +213,10 @@ function AS:GuildRosterManager()
 	AS:SkinCheckBox(GRM_ReputationToggleButton)
 	AS:SkinCheckBox(GRM_BirthdayToggleButton)
 	AS:SkinCheckBox(GRM_ColorizePlayerNamesButton)
-	AS:SkinSlideBar(GRM_CoreWindowScaleSlider)
-	AS:SkinSlideBar(GRM_MouseOverScaleSlider)
-	AS:SkinSlideBar(GRM_MacroToolScaleSlider)
-	AS:SkinSlideBar(GRM_ExportToolScaleSlider)
-	AS:SkinSlideBar(GRM_AdvancedAuditToolScaleSlider)
+	AS:SkinCheckBox(GRM_ShowLevelCheckButton)
+	AS:SkinCheckBox(GRM_ShowLevelCheckButton2)
+	AS:SkinCheckBox(GRM_ShowMythicRatingButton)
+
 
 	----------------------------
 	-- Add Event to Calendar Frame
@@ -652,7 +647,7 @@ function AS:GuildRosterManager()
 			GRM_UI.GRM_MemberDetailMetaData.GRM_MemberDetailDateJoinedTitleTxt:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
 			GRM_UI.GRM_MemberDetailMetaData.GRM_MemberDetailBirthdayTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 9 , "NONE" );
 			GRM_UI.GRM_MemberDetailMetaData.GRM_altFrameTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 8 , "NONE" );
-			GRM_UI.GRM_CoreAltFrame.GRM_AddAltEditFrame.GRM_AddAltTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 11 , "NONE" );
+			GRM_UI.GRM_MemberDetailMetaData.GRM_CoreAltFrame.GRM_AddAltEditFrame.GRM_AddAltTitleText:SetFont ( GRM_G.FontChoice , GRM_G.FontModifier + 11 , "NONE" );
 
 			-- Tooltip Scaling should be a bit bigger
 			GRM_MemberDetailNJDSyncTooltip:SetScale ( 0.85 )
