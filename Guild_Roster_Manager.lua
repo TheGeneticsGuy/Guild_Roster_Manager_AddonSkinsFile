@@ -748,7 +748,6 @@ function AS:GuildRosterManager()
 			AS:SkinFrame(GRM_RosterReportUpcomingEventsOverlayNote)
 			AS:SkinFrame(GRM_RosterMinLvlOverlayNote)
 			AS:SkinFrame(GRM_AutoTriggerTimeOverlayNote)
-			AS:SkinFrame(GRM_AutoBackupTimeOverlayNote)
 
 			isLoaded2 = true
 		end
