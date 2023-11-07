@@ -1,4 +1,4 @@
- 	-- Updated July 27th 2023 GRM ver 1.980 (Classic/Wrath/Live Retail Compatible, all tested)
+ 	-- Updated November 7th, 2023
 
 local AS = unpack(AddOnSkins)
 
@@ -150,6 +150,7 @@ function AS:GuildRosterManager()
 	AS:SkinCheckBox(GRM_RosterShowMainTagCheckButton)
 	AS:SkinCheckBox(GRM_ShowMainTagOnMains)
 	AS:SkinCheckBox(GRM_ShowMinimapButton)
+	AS:SkinCheckBox(GRM_AchievementAnnounceButton)
 	AS:SkinCheckBox(GRM_SyncAllSettingsCheckButton)
 	AS:SkinCheckBox(GRM_DefaultTabSelectionButton)
 
@@ -219,7 +220,8 @@ function AS:GuildRosterManager()
 	AS:SkinCheckBox(GRM_ShowLevelCheckButton)
 	AS:SkinCheckBox(GRM_ShowLevelCheckButton2)
 	AS:SkinCheckBox(GRM_ShowMythicRatingButton)
-
+	AS:SkinCheckBox(GRM_ShowFactionCheckButton)
+	AS:SkinCheckBox(GRM_AutoHideFramesInCombatCheckButton)
 
 	----------------------------
 	-- Add Event to Calendar Frame
@@ -412,6 +414,8 @@ function AS:GuildRosterManager()
 	AS:SkinButton(GRM_KickTab)
 	AS:SkinButton(GRM_PromoTab)
 	AS:SkinButton(GRM_DemoteTab)
+	AS:SkinButton(GRM_SpecialTab)
+	AS:SkinButton(GRM_ToolHotKeyEditButton)
 
 	--------------------
 	-- Export Tool
@@ -431,11 +435,22 @@ function AS:GuildRosterManager()
 	AS:SkinScrollBar(GRM_ExportLogScrollFrameSlider)
 	AdjustSliderThumbFrameLevel ( GRM_ExportLogScrollFrameSliderThumbTexture )
 
-	for i = 1 , 21 do
+	for i = 1 , 23 do
 		if i ~= 19 then
 			AS:SkinCheckBox(_G["GRM_ExportFilter"..i])
 		end
 	end
+	
+	AS:SkinButton(GRM_ExportLogTab)
+	AS:SkinButton(GRM_ExportGuildDataTab)
+	AS:SkinButton(GRM_ExportLeftGuildDataTab)
+	AS:SkinButton(GRM_ExportDeathsTab)
+
+	AS:SkinCheckBox(GRM_ExportSelectAllButton)
+	AS:SkinRadioButton(GRM_ExportFilter17_Radial1)
+	AS:SkinRadioButton(GRM_ExportFilter17_Radial2)
+	AS:SkinEditBox(GRM_ExportLevelRangeEditBox1)
+	AS:SkinEditBox(GRM_ExportLevelRangeEditBox2)
 
 	--------------------
 	---- GRM Roster ----
@@ -448,21 +463,60 @@ function AS:GuildRosterManager()
 		AS:SkinFrame(GRM_RosterFrameScrollFrame)
 		AS:SkinFrame(GRM_RosterFrameDropDown)
 		AS:SkinFrame(GRM_RosterFrameDropDownRank)
+		AS:SkinFrame(GRM_RosterOptions)
 		AS:SkinButton(GRM_RosterColumnLvl)
 		AS:SkinButton(GRM_RosterColumnName)
 		AS:SkinButton(GRM_RosterColumnLastOnline)
 		AS:SkinButton(GRM_RosterColumnRank)
 		AS:SkinButton(GRM_RosterColumnNote)
 		AS:SkinButton(GRM_RosterColumnOfficerNote)
-		
+		AS:SkinCheckBox(GRM_RosterShowOfflineCheckBox)
+		AS:SkinCheckBox(GRM_RosterOptionsShowMains)
+		AS:SkinCheckBox(GRM_RosterOptionsShowAlts)
+		AS:SkinCheckBox(GRM_RosterOptionsShowMainTag)
+		AS:SkinCheckBox(GRM_RosterOptionsShowAltTag)
+		AS:SkinCheckBox(GRM_RosterOptionsGroupByMain)
+		AS:SkinSlideBar(GRM_RowsCountSlider)
+
 		if GRM_G.BuildVersion >= 80000 then
 			AS:SkinButton(GRM_RosterColumnMythicPlus)
 		end
 		AS:SkinScrollBar(GRM_RosterFrameScrollFrameSlider)		
 		AS:SkinEditBox(GRM_RosterFrameNameEditBox)
 		AS:SkinEditBox(GRM_RosterNoteEditBox)
+
+		-- Spacing
+		GRM_RosterOptions:SetPoint ( "TOP" , GRM_UI.GRM_RosterFrame , "BOTTOM" , 0 , -1 )
+		GRM_RosterOptionsButton:SetPoint ( "BOTTOMRIGHT" , GRM_UI.GRM_RosterFrame , "BOTTOMLEFT" , 0 , 0 )
 	
 		newRosterLoaded = true;
+
+	end
+
+	-- GRM wrote it's own custom UI API to load frames on-demand, this has some issues now with skinning frames that might not exist on load. This creates the skinning
+	-- to be nested. More will be added with time as this is a recent update, and eventually all frames will be rewritten into the new API, saving 1000s
+	-- of lines of code.
+	local GRM_CustomUI_API_DelayLoad = function()
+
+		-- Hardcore
+		AS:SkinButton(GRM_HardcoreTab)
+		AS:SkinCheckBox(GRM_HardcoreAddTagCheckbox)
+		AS:SkinCheckBox(GRM_HardcoreAddTimeCheckbox)
+
+		-- Audit Window
+		AS:SkinFrame(GRM_AuditVerifyAllFrame)
+		AS:SkinEditBox(GRM_VerifyFrameEditBox1)
+		AS:SkinButton(GRM_VerifyAllConfirmButton)
+		AS:SkinButton(GRM_VerifyAllRankButton)
+		AS:SkinButton(GRM_VerifyAllJoinButton)
+
+		-- Macro Frame
+		AS:SkinFrame(GRM_ToolEditHotKeyFrame)
+		AS:SkinEditBox(GRM_HotKeyEditBox)
+		AS:SkinButton(GRM_HotKeyClearButton)
+		AS:SkinButton(GRM_HotKeyConfirmButton)
+		AS:SkinButton(GRM_HotKeyShiftButton)
+		AS:SkinButton(GRM_HotKeyControlButton)
 
 	end
 
@@ -475,7 +529,7 @@ function AS:GuildRosterManager()
 		AS:SkinCheckBox(GRM_IgnoreListFrameKickCheckBox)
 		AS:SkinCheckBox(GRM_IgnoreListFramePromoteCheckBox)
 		AS:SkinCheckBox(GRM_IgnoreListFrameDemoteCheckBox)
-		AS:SkinEditBox(GRM_IgnoreListPromoteTimeExpireEditBox)
+		AS:SkinEditBox(GRM_IgnoreListPromoteTimeExpireEditBox) 
 		AS:SkinEditBox(GRM_IgnoreListKickTimeExpireEditBox)
 		AS:SkinEditBox(GRM_IgnoreListDemoteTimeExpireEditBox)
 	end
@@ -691,15 +745,11 @@ function AS:GuildRosterManager()
 			AS:SkinFrame(GRM_RosterTimeIntervalOverlayNote)
 			AS:SkinFrame(GRM_ReportInactiveReturnOverlayNote)
 			AS:SkinFrame(GRM_RosterReportUpcomingEventsOverlayNote)
+			AS:SkinCheckBox(GRM_ScanOptionsAnniversaryAnnounce)
+			AS:SkinCheckBox(GRM_ScanOptionsBirthdayAnnounce)
 			AS:SkinFrame(GRM_RosterMinLvlOverlayNote)
 			AS:SkinFrame(GRM_AutoTriggerTimeOverlayNote)
-
-			-- Verify All Frame
-			AS:SkinFrame(GRM_AuditVerifyAllFrame)
-			AS:SkinEditBox(GRM_VerifyFrameEditBox1)
-			AS:SkinButton(GRM_VerifyAllConfirmButton)
-			AS:SkinButton(GRM_VerifyAllRankButton)
-			AS:SkinButton(GRM_VerifyAllJoinButton)
+			AS:SkinCheckBox(GRM_AnnounceBdaysOnLoginButton)
 
 			isLoaded2 = true
 		end
@@ -713,7 +763,7 @@ function AS:GuildRosterManager()
 	end
 
 	local WaitForLoad;
-	WaitForLoad = function ( load1 , load2 , load3 , load4 )
+	WaitForLoad = function ( load1 , load2 , load3 , load4 , load5 )
 
 		if load1 and GRM_EnableMouseOver then
 			load1 = false
@@ -729,8 +779,7 @@ function AS:GuildRosterManager()
 
 			if load4 and GRM_RosterTab and FriendsFrame then
 				AS:SkinButton (GRM_RosterTab)
-				GRM_RosterTab:SetSize ( 32,32 )
-				GRM_RosterTab:SetPoint( "LEFT" , FriendsFrameTab4 , "RIGHT" , -5 , -3 )
+				GRM_RosterTab:SetPoint( "TOPRIGHT" , FriendsFrame, "BOTTOMRIGHT" , -5 , 0 )
 				load4 = false;
 			end
 
@@ -757,15 +806,23 @@ function AS:GuildRosterManager()
 			end);
 		end
 
-		if load1 or load2 or load3 or load4 then
+		if load5 then
+
+			if GRM_HardcoreTab then
+				load5 = false;
+				GRM_CustomUI_API_DelayLoad()
+			end
+		end
+
+		if load1 or load2 or load3 or load4 or load5 then
 			C_Timer.After ( 3 , function()
-				WaitForLoad( load1 , load2 , load3 , load4 )
+				WaitForLoad( load1 , load2 , load3 , load4 , load5 )
 				return;
 			end)
 		end
 	end
 
-	WaitForLoad ( true , true , true , true );
+	WaitForLoad ( true , true , true , true , true );
 
 end
 
