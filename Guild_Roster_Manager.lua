@@ -1,4 +1,4 @@
- 	-- Updated November 7th, 2023
+ 	-- Updated July 29th, 2024 - Fully compatible with the 11.0 update for GRM and 1.15.3 CE and 4.4.0 Cata
 
 local AS = unpack(AddOnSkins)
 

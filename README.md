@@ -3,6 +3,10 @@ This is the Skinning file for the popular AddOnSkins addon in conjunction with E
 
 ***THIS SKIN IS INDEPENDENTLY MAINTAINED BY the GUILD ROSTER MANAGER CREATOR***
 
+If the author of *AddOnSkins* does not merge my file when I send, you can always download them and install manually at this location. Just save over the one already there:
+
+```\Interface\AddOns\AddOnSkins\Skins\AddOns\Guild_Roster_Manager.lua```
+
 **The Skinned Mouseover**
 
 ![Skinned Mouseover](https://i.imgur.com/tl9HvQu.jpg)
