@@ -1,4 +1,4 @@
- 	-- Updated July 29th, 2024 - Fully compatible with the 11.0 update for GRM and 1.15.3 CE and 4.4.0 Cata
+ 	-- Updated July 31st, 2024 - Fully compatible with the 11.0 update for GRM and 1.15.3 CE and 4.4.0 Cata
 
 local AS = unpack(AddOnSkins)
 
@@ -657,6 +657,11 @@ function AS:GuildRosterManager()
 
 			-- Ignore Macro 
 			skinMacroIgnoreLists()
+
+			-- Need to update textures
+			GRM_UI.GRM_MemberDetailMetaData.GRM_HordeIconTexture:SetTexture ( "Interface\\AddOns\\Guild_Roster_Manager\\media\\Icons\\Horde_Icon.blp" );
+			GRM_UI.GRM_MemberDetailMetaData.GRM_AllianceIconTexture:SetTexture ( "Interface\\AddOns\\Guild_Roster_Manager\\media\\Icons\\Alliance_Icon.blp" );
+			GRM_UI.GRM_MemberDetailMetaData.GRM_DeathTexture:SetTexture ( "Interface\\AddOns\\Guild_Roster_Manager\\media\\Icons\\dead.png" );
 
 			isLoaded = true
 		end
